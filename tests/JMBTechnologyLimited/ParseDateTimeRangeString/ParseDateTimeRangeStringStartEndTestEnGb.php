@@ -9,7 +9,7 @@ namespace JMBTechnologyLimited\ParseDateTimeRangeString;
  * @copyright (c) 2013-2014, JMB Technology Limited, http://jmbtechnology.co.uk/
  * @author James Baster <james@jarofgreen.co.uk>
  */
-class ParseDateTimeRangeStringStartEndTest extends \PHPUnit_Framework_TestCase{
+class ParseDateTimeRangeStringStartEndTestEnGb extends \PHPUnit_Framework_TestCase{
 
 	
 	function startEndProvider() {
@@ -82,7 +82,7 @@ class ParseDateTimeRangeStringStartEndTest extends \PHPUnit_Framework_TestCase{
 		$dt->setTimezone(new \DateTimeZone("Europe/London"));
 		$dt->setDate(2013, 10, 1);
 		$dt->setTime(13, 0, 0);
-		$parse = new ParseDateTimeRangeString($dt, "Europe/London");
+		$parse = new ParseDateTimeRangeString($dt, "Europe/London", "EN", "GB");
 		$result = $parse->parse($stringIn);		
 		$this->assertFalse(is_null($result->getStart()));
 		$this->assertEquals($syear, $result->getStart()->format('Y'));

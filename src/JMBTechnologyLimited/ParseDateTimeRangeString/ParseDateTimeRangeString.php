@@ -19,7 +19,7 @@ class ParseDateTimeRangeString {
 	protected $currentDateTime;
 
 
-	public function __construct($currentDateTime,  $timezone='UTC') {
+	public function __construct($currentDateTime,  $timezone='UTC', $language="EN", $country="GB") {
 	
 		$this->currentDateTime = $currentDateTime;
 		$this->currentDateTime->setTimezone(new \DateTimeZone($timezone));
