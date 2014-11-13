@@ -204,10 +204,16 @@ class ParseDateTimeRangeString {
 				}
 		}
 		
-		// month
-		
+		// month as word
 		for ($i = 1; $i <= 12; $i++) {
 			foreach($this->monthNames[$i] as $monthName) {
+				$matches = array();
+				// month as word with a 1 or 2 digit number in front, assume it's the date!
+				if (preg_match("/ (\d{1,2}) ".strtolower($monthName)."/", strtolower($string), $matches)) {
+					$dateTime->setDate($dateTime->format('Y'), $i, $matches[1]);
+					return;
+				}
+				// month by itself.
 				if (strpos(strtolower($string), strtolower($monthName)) !== false) {
 					$string = str_ireplace($monthName, " ", $string);
 					$dateTime->setDate($dateTime->format('Y'), $i, $dateTime->format('j'));

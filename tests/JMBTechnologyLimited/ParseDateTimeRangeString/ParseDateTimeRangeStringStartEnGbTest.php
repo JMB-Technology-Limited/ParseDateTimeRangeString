@@ -121,7 +121,10 @@ class ParseDateTimeRangeStringStartEnGbTest extends \PHPUnit_Framework_TestCase{
 			array('2014/20/2 10:00',2014,2,20,10,0),
 			array('2014/2/20 10:00',2014,2,20,10,0),
 			// from Jon.
-			# TODO array('Thursday, 19 December 2013 from 13:00 to 18:00',2013,12,19,13,0),
+			array('Thursday, 19 December 2013 from 13:00 to 18:00',2013,12,19,13,0),
+			array('Thursday, 9 December 2013 from 13:00 to 18:00',2013,12,9,13,0),
+			array('Thursday, 19 December from 13:00 to 18:00',2013,12,19,13,0),
+			array('Thursday, 9 December from 13:00 to 18:00',2013,12,9,13,0),
 			// Specify dates that should roll over into the next year
 			# TODO array('1st Jan 10am',2014,01,01,10,00,00),			
 		);
