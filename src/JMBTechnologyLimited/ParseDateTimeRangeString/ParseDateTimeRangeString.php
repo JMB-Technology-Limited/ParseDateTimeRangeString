@@ -211,6 +211,7 @@ class ParseDateTimeRangeString {
 				// month as word with a 1 or 2 digit number in front, assume it's the date!
 				if (preg_match("/ (\d{1,2}) ".strtolower($monthName)."/", strtolower($string), $matches)) {
 					$dateTime->setDate($dateTime->format('Y'), $i, $matches[1]);
+					$this->ifDateInPastAddAYear($dateTime);
 					return;
 				}
 				// month by itself.
@@ -221,6 +222,12 @@ class ParseDateTimeRangeString {
 				}
 			}
 		}
+
+
+		// We've set the year and the month.
+		// at this point, we can check if it's this year or next year.
+		// We have to do this now so that working out things like "1st Sun Jan" happens in the correct year!
+		$this->ifDateInPastAddAYear($dateTime);
 
 		// day
 		// order done very carefully ....
@@ -284,7 +291,13 @@ class ParseDateTimeRangeString {
 		
 		
 	}
-	
+
+	protected function ifDateInPastAddAYear(\DateTime $dateTime) {
+		if ($dateTime < $this->currentDateTime) {
+			$dateTime->add(new \DateInterval("P1Y"));
+		}
+	}
+
 	protected function parseShortFormatForDate($year, $probableMonth, $probableDay, \DateTime $dateTime) {
 
 		

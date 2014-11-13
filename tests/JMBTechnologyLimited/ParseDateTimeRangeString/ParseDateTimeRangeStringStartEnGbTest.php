@@ -97,7 +97,6 @@ class ParseDateTimeRangeStringStartEnGbTest extends \PHPUnit_Framework_TestCase{
 			// Test: years
 			array('1st jan 2014 09:00',2014,1,1,9,0),
 			array('1st jan next year 09:00',2014,1,1,9,0),
-			array('1st jan this year 09:00',2013,1,1,9,0),
 			// if a day of week and time in past ... next week
 			array('tuesday 17:00',2013,10,1,17,0),
 			# TODO array('tuesday 10:00',2013,10,8,10,0),
@@ -126,7 +125,13 @@ class ParseDateTimeRangeStringStartEnGbTest extends \PHPUnit_Framework_TestCase{
 			array('Thursday, 19 December from 13:00 to 18:00',2013,12,19,13,0),
 			array('Thursday, 9 December from 13:00 to 18:00',2013,12,9,13,0),
 			// Specify dates that should roll over into the next year
-			# TODO array('1st Jan 10am',2014,01,01,10,00,00),			
+			array('1st Jan 10am',2014,01,01,10,00,00),	
+			array('10th Jan 10am',2014,01,10,10,00,00),	
+			array('Wed, 1 Jan 10am',2014,01,01,10,00,00),
+			array('1st sunday jan 09:00',2014,1,5,9,0),
+			array('2nd sunday jan 09:00',2014,1,12,9,0),
+			array('3rd sunday jan 09:00',2014,1,19,9,0),
+			array('4th sunday jan 09:00',2014,1,26,9,0),
 		);
 	}
 	
