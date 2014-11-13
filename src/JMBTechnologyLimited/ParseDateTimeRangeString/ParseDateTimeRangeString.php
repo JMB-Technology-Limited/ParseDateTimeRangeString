@@ -258,6 +258,28 @@ class ParseDateTimeRangeString {
 			}
 		}
 		
+		// check for last day of month
+		for ($iDayOfWeek = 1; $iDayOfWeek <= 7; $iDayOfWeek++) {
+			foreach($this->dayOfWeekNames[$iDayOfWeek] as $dayOfWeekName) {
+				if (strpos(strtolower($string), strtolower("last ".$dayOfWeekName)) !== false) {
+					// set to first day of next month
+					if ($dateTime->format('n') == 12) {
+						$dateTime->setDate($dateTime->format('Y')+1,  1, 1);
+					} else {
+						$dateTime->setDate($dateTime->format('Y'),  $dateTime->format('n')+1, 1);
+					}
+					// Go back one day so on last on month
+					$dateTime->sub(new \DateInterval("P1D"));
+					// Now keep going back till on right day of week
+					while($dateTime->format('N') != $iDayOfWeek) {
+						$dateTime->sub(new \DateInterval("P1D"));
+					}
+					// Done, yay!
+					return;
+				}
+			}
+		}
+
 		// now we check for "1st" as in the actual 1st of month, with no day on end
 		for($i = 31; $i > 0; $i--) {
 			foreach($this->dayOfMonthNames[$i] as $dayOfMonthName) {

@@ -87,13 +87,13 @@ class ParseDateTimeRangeStringStartEnGbTest extends \PHPUnit_Framework_TestCase{
 			array('Second wed nov 09:00',2013,11,13,9,0),
 			array('3rd wednesday nov 09:00',2013,11,20,9,0),
 			array('Third wednesday nov 09:00',2013,11,20,9,0),
-			# TODO array('last wednesday nov 09:00',2013,11,27,9,0),
+			array('last wednesday nov 09:00',2013,11,27,9,0),
 			array('1st sunday dec 09:00',2013,12,1,9,0),
 			array('2nd sunday dec 09:00',2013,12,8,9,0),
 			array('3rd  sunday 09:00',2013,10,20,9,0),
 			array('4th  sunday 09:00',2013,10,27,9,0),
 			array('fourth  sunday 09:00',2013,10,27,9,0),
-			# TODO array('last sun dec 09:00',2013,12,29,9,0),
+			array('last sun dec 09:00',2013,12,29,9,0),
 			// Test: years
 			array('1st jan 2014 09:00',2014,1,1,9,0),
 			array('1st jan next year 09:00',2014,1,1,9,0),
@@ -136,6 +136,7 @@ class ParseDateTimeRangeStringStartEnGbTest extends \PHPUnit_Framework_TestCase{
 			array('2nd sunday jan 09:00',2014,1,12,9,0),
 			array('3rd sunday jan 09:00',2014,1,19,9,0),
 			array('4th sunday jan 09:00',2014,1,26,9,0),
+			array('last sunday jan 09:00',2014,1,26,9,0),
 		);
 	}
 	
