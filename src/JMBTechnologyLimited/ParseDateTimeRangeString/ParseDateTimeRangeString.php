@@ -214,6 +214,12 @@ class ParseDateTimeRangeString {
 					$this->ifDateInPastAddAYear($dateTime);
 					return;
 				}
+				// month as word with a 1 or 2 digit number at end, assume it's the date!
+				if (preg_match("/".strtolower($monthName)." (\d{1,2}) /", strtolower(" ".$string), $matches)) {
+					$dateTime->setDate($dateTime->format('Y'), $i, $matches[1]);
+					$this->ifDateInPastAddAYear($dateTime);
+					return;
+				}
 				// month as word with a 1 or 2 digit number in front and "of", assume it's the date!
 				if (preg_match("/ (\d{1,2}) of ".strtolower($monthName)."/", strtolower(" ".$string), $matches)) {
 					$dateTime->setDate($dateTime->format('Y'), $i, $matches[1]);
