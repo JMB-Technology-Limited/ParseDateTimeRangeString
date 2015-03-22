@@ -6,7 +6,7 @@ namespace JMBTechnologyLimited\ParseDateTimeRangeString;
  *
  * @link https://github.com/JMB-Technology-Limited/ParseDateTimeRangeString
  * @license https://raw.github.com/JMB-Technology-Limited/ParseDateTimeRangeString/master/LICENSE.txt 3-clause BSD
- * @copyright (c) 2013-2014, JMB Technology Limited, http://jmbtechnology.co.uk/
+ * @copyright (c) 2013-2015, JMB Technology Limited, http://jmbtechnology.co.uk/
  * @author James Baster <james@jarofgreen.co.uk>
  */
 class ParseDateTimeRangeStringEnGBStartTest extends \PHPUnit_Framework_TestCase{
@@ -137,6 +137,8 @@ class ParseDateTimeRangeStringEnGBStartTest extends \PHPUnit_Framework_TestCase{
 			array('3rd sunday jan 09:00',2014,1,19,9,0),
 			array('4th sunday jan 09:00',2014,1,26,9,0),
 			array('last sunday jan 09:00',2014,1,26,9,0),
+			// day "of" month
+			array('27th of Dec 7pm', 2013, 12, 27, 19, 0, 0),
 		);
 	}
 	
