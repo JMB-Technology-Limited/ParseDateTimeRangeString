@@ -140,6 +140,8 @@ class ParseDateTimeRangeStringEnGBStartTest extends \PHPUnit_Framework_TestCase{
 			// day "of" month
 			array('27th of Dec 7pm', 2013, 12, 27, 19, 0, 0),
 			array('27 of Dec 7pm', 2013, 12, 27, 19, 0, 0),
+			// numbers near month with nothing else are date
+			array('27 Dec 7pm', 2013, 12, 27, 19, 0, 0),
 		);
 	}
 	
