@@ -6,7 +6,7 @@ namespace JMBTechnologyLimited\ParseDateTimeRangeString;
  *
  * @link https://github.com/JMB-Technology-Limited/ParseDateTimeRangeString
  * @license https://raw.github.com/JMB-Technology-Limited/ParseDateTimeRangeString/master/LICENSE.txt 3-clause BSD
- * @copyright (c) 2013-2014, JMB Technology Limited, http://jmbtechnology.co.uk/
+ * @copyright (c) 2013-2015, JMB Technology Limited, http://jmbtechnology.co.uk/
  * @author James Baster <james@jarofgreen.co.uk>
  */
 class ParseDateTimeRangeString {
@@ -210,6 +210,12 @@ class ParseDateTimeRangeString {
 				$matches = array();
 				// month as word with a 1 or 2 digit number in front, assume it's the date!
 				if (preg_match("/ (\d{1,2}) ".strtolower($monthName)."/", strtolower(" ".$string), $matches)) {
+					$dateTime->setDate($dateTime->format('Y'), $i, $matches[1]);
+					$this->ifDateInPastAddAYear($dateTime);
+					return;
+				}
+				// month as word with a 1 or 2 digit number in front and "of", assume it's the date!
+				if (preg_match("/ (\d{1,2}) of ".strtolower($monthName)."/", strtolower(" ".$string), $matches)) {
 					$dateTime->setDate($dateTime->format('Y'), $i, $matches[1]);
 					$this->ifDateInPastAddAYear($dateTime);
 					return;
