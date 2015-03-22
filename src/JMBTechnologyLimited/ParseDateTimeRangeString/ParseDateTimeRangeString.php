@@ -171,20 +171,20 @@ class ParseDateTimeRangeString {
 		
 		// Y/M/D in short format ... year at start
 		$matches = array();
-		if (preg_match("/(\d{4})\/(\d{1,2})\/(\d{1,2})/", $string, $matches)) {
-			return $this->parseShortFormatForDate($matches[1], $matches[2], $matches[3], $dateTime);
+		if (preg_match("/(\d{4})(\/|-)(\d{1,2})(\/|-)(\d{1,2})/", $string, $matches)) {
+			return $this->parseShortFormatForDate($matches[1], $matches[3], $matches[5], $dateTime);
 		}
 
 		// D/M/Y in short format ... year at end
 		$matches = array();
-		if (preg_match("/(\d{1,2})\/(\d{1,2})\/(\d{4})/", $string, $matches)) {
-			return $this->parseShortFormatForDate($matches[3], $matches[2], $matches[1], $dateTime);
+		if (preg_match("/(\d{1,2})(\/|-)(\d{1,2})(\/|-)(\d{4})/", $string, $matches)) {
+			return $this->parseShortFormatForDate($matches[5], $matches[3], $matches[1], $dateTime);
 		}
 		
 		// D/M/Y or Y/M/D in short format ... year unknown, assume at end
 		$matches = array();
-		if (preg_match("/(\d{1,2})\/(\d{1,2})\/(\d{2})/", $string, $matches)) {
-			return $this->parseShortFormatForDate($matches[3], $matches[2], $matches[1], $dateTime);
+		if (preg_match("/(\d{1,2})(\/|-)(\d{1,2})(\/|-)(\d{2})/", $string, $matches)) {
+			return $this->parseShortFormatForDate($matches[5], $matches[3], $matches[1], $dateTime);
 		}
 		
 		
