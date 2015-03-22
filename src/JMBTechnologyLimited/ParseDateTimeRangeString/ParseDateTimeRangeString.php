@@ -32,8 +32,9 @@ class ParseDateTimeRangeString {
 		$string = str_replace("\t", " ", $string);
 		$string = str_replace("\n", " ", $string);
 		$string = str_replace("\r", " ", $string);
+		$string = str_replace(",", " ", $string);
 		$string = str_replace("  ", " ", $string);
-		
+
 		$start = clone $this->currentDateTime;
 
 		$stringStart = $string;
