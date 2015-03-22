@@ -378,7 +378,24 @@ class ParseDateTimeRangeString {
 			}
 			return true;
 		}
-		
+		// same as above bit with a space in it. I'm sure there is a clever regex to do this in one.
+		if (preg_match("/(\d{1,2})(\:|\.)(\d{1,2}) am/", $string, $matches)) {
+			if ($matches[1] == 12) {
+				$dateTime->setTime(0, $matches[3], 0);
+			} else {
+				$dateTime->setTime($matches[1], $matches[3], 0);
+			}
+			return true;
+		}
+		if (preg_match("/(\d{1,2})(\:|\.)(\d{1,2}) pm/", $string, $matches)) {
+			if ($matches[1] == 12) {
+				$dateTime->setTime(12, $matches[3], 0);
+			} else {
+				$dateTime->setTime($matches[1]+12, $matches[3], 0);
+			}
+			return true;
+		}
+
 		if (preg_match("/(\d{1,2})am/", $string, $matches)) {
 			if ($matches[1] == 12) {
 				$dateTime->setTime(0, 0, 0);

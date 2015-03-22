@@ -71,6 +71,8 @@ class ParseDateTimeRangeStringEnGBStartEndTest extends \PHPUnit_Framework_TestCa
 			array('friday between 7pm and 10pm',  2013,10,4,19,0,  2013,10,4,22,0),
 			// from Al.
 			# TODO array('20th Dec 2014 1800 to 1900',  2014,12,20,18,0,  2014,12,20,19,0),
+			// misc
+			array('14/04/2015 7:00 pm - 9:00 pm',  2015,04,14,19,0,   2015,04,14,21,0),
 		);
 	}
 	
