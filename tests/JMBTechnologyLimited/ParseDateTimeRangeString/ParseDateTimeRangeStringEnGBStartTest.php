@@ -206,6 +206,33 @@ class ParseDateTimeRangeStringEnGBStartTest extends \PHPUnit_Framework_TestCase{
 		$this->assertEquals($hour, $result->getStart()->format('G'));
 		$this->assertEquals($minute, $result->getStart()->format('i'));
 	}
+
+
+	function startProvider3() {
+		return array(
+			// specify both day and date.
+			array('April 9th 7:30pm',2015,4,9,19,30),
+		);
+	}
+
+	/**
+	 * Some tests needed a different start date!
+	* @dataProvider startProvider3
+	*/
+	function testStart3($stringIn, $year, $month, $day, $hour, $minute) {
+		$dt = new \DateTime;
+		$dt->setTimezone(new \DateTimeZone("Europe/London"));
+		$dt->setDate(2015, 3, 31);
+		$dt->setTime(9, 0, 0);
+		$parse = new ParseDateTimeRangeString($dt, "Europe/London");
+		$result = $parse->parse($stringIn);
+		$this->assertFalse(is_null($result->getStart()));
+		$this->assertEquals($year, $result->getStart()->format('Y'));
+		$this->assertEquals($month, $result->getStart()->format('n'));
+		$this->assertEquals($day, $result->getStart()->format('j'));
+		$this->assertEquals($hour, $result->getStart()->format('G'));
+		$this->assertEquals($minute, $result->getStart()->format('i'));
+	}
 	
 	
 }

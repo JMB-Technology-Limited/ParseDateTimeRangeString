@@ -230,7 +230,12 @@ class ParseDateTimeRangeString {
 				// month by itself.
 				if (strpos(strtolower($string), strtolower($monthName)) !== false) {
 					$string = str_ireplace($monthName, " ", $string);
-					$dateTime->setDate($dateTime->format('Y'), $i, $dateTime->format('j'));
+					if (checkdate($i, $dateTime->format('j'), $dateTime->format('Y'))) {
+						$dateTime->setDate($dateTime->format('Y'), $i, $dateTime->format('j'));
+					} else {
+						// Today may be the 31st March, and trying to set "April" ... setting 31st April will make odd results!
+						$dateTime->setDate($dateTime->format('Y'), $i, 1);
+					}
 					// We are only setting month here, so can't return, may miss day.
 				}
 			}
@@ -302,7 +307,7 @@ class ParseDateTimeRangeString {
 				}
 			}			
 		}
-		
+
 		// now check for "tue" or "next tue". 
 		// Do this last so  if "tue 2nd" specified we use the "2nd" part in previous clause 
 		// and ignore "tue" 
@@ -323,8 +328,8 @@ class ParseDateTimeRangeString {
 				}
 			}
 		}
-		
-		
+
+
 	}
 
 	protected function ifDateInPastAddAYear(\DateTime $dateTime) {
