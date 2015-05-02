@@ -21,6 +21,8 @@ $timezone = isset($argv[2]) ? $argv[2] : "Europe/London";
 print "In: ".$string."\n";
 print "Timezone: ".$timezone."\n";
 
+date_default_timezone_set($timezone);
+
 # Parse
 $parse = new ParseDateTimeRangeString(new \DateTime(), $timezone);
 $result = $parse->parse($string);
