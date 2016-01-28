@@ -54,3 +54,5 @@ print "Out End Day Of Week: ".$dayOfWeekNames[$result->getEnd()->format('N')]." 
 		$result->getEnd()->format('i')." ".
 		"\n";
 
+print "Was end specified: ". ($result->getEndWasSpecified() ? "yes" : "no")."\n";
+

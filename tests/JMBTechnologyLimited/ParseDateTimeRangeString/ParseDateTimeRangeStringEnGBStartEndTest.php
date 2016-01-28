@@ -14,8 +14,6 @@ class ParseDateTimeRangeStringEnGBStartEndTest extends \PHPUnit_Framework_TestCa
 	
 	function startEndProvider() {
 		return array(
-			// if no end time, 2 hours default
-			array('15th dec 2013 7pm',  2013,12,15,19,0,  2013,12,15,21,0),
 			array('15th dec 2013 7pm to 10pm',  2013,12,15,19,0,  2013,12,15,22,0),
 			array('mon 7am to tue 10pm',  2013,10,7,7,0,  2013,10,8,22,0),
 			array('mon 7am to 10pm',  2013,10,7,7,0,  2013,10,7,22,0),
@@ -72,9 +70,18 @@ class ParseDateTimeRangeStringEnGBStartEndTest extends \PHPUnit_Framework_TestCa
 			// from Al.
 			# TODO array('20th Dec 2014 1800 to 1900',  2014,12,20,18,0,  2014,12,20,19,0),
 			// misc
-			array('14/04/2015 7:00 pm - 9:00 pm',  2015,04,14,19,0,   2015,04,14,21,0),
-			array('14/04/2015 7 pm - 9 pm',  2015,04,14,19,0,   2015,04,14,21,0),
-			array('14/04/2015 19:30 - 21:30',  2015,04,14,19,30,   2015,04,14,21,30),
+			array('14/04/2015 7:00 pm - 10:00 pm',  2015,04,14,19,0,   2015,04,14,22,0),
+			array('14/04/2015 7 pm - 10 pm',  2015,04,14,19,0,   2015,04,14,22,0),
+			array('14/04/2015 19:30 - 22:30',  2015,04,14,19,30,   2015,04,14,22,30),
+            // from Jon.
+            array('Thursday, 19 December 2013 from 13:00 to 18:00',2013,12,19,13,0,  2013,12,19,18,0),
+            array('Thursday, 9 December 2013 from 13:00 to 18:00',2013,12,9,13,0,  2013,12,9,18,0),
+            array('Thursday, 19 December from 13:00 to 18:00',2013,12,19,13,0,  2013,12,19,18,0),
+            array('Thursday, 9 December from 13:00 to 18:00',2013,12,9,13,0,  2013,12,9,18,0),
+            array('19 December 2013 from 13:00 to 18:00',2013,12,19,13,0,  2013,12,19,18,0),
+            array('9 December 2013 from 13:00 to 18:00',2013,12,9,13,0,   2013,12,9,18,0),
+            array('19 December from 13:00 to 18:00',2013,12,19,13,0,  2013,12,19,18,0),
+            array('9 December from 13:00 to 18:00',2013,12,9,13,0,   2013,12,9,18,0),
 		);
 	}
 	
@@ -87,6 +94,7 @@ class ParseDateTimeRangeStringEnGBStartEndTest extends \PHPUnit_Framework_TestCa
 		$dt->setDate(2013, 10, 1);
 		$dt->setTime(13, 0, 0);
 		$parse = new ParseDateTimeRangeString($dt, "Europe/London", "EN", "GB");
+        $parse->setDefaultRangeLengthSeconds(7200); // 2 hours
 		$result = $parse->parse($stringIn);		
 		$this->assertFalse(is_null($result->getStart()));
 		$this->assertEquals($syear, $result->getStart()->format('Y'));
@@ -99,6 +107,7 @@ class ParseDateTimeRangeStringEnGBStartEndTest extends \PHPUnit_Framework_TestCa
 		$this->assertEquals($eday, $result->getEnd()->format('j'));
 		$this->assertEquals($ehour, $result->getEnd()->format('G'));
 		$this->assertEquals($eminute, $result->getEnd()->format('i'));
+        $this->assertTrue($result->getEndWasSpecified());
 	}
 	
 	

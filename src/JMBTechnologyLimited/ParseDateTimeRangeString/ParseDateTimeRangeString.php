@@ -18,6 +18,7 @@ class ParseDateTimeRangeString {
 	/** @var \DateTime **/
 	protected $currentDateTime;
 
+    protected $defaultRangeLengthSeconds = 7200; // 2 hours
 
 	public function __construct($currentDateTime,  $timezone='UTC', $language="EN", $country="GB") {
 	
@@ -35,6 +36,8 @@ class ParseDateTimeRangeString {
 		$string = str_replace(",", " ", $string);
 		$string = str_replace("  ", " ", $string);
 
+        $endWasSpecified = false;
+
 		$start = clone $this->currentDateTime;
 
 		$stringStart = $string;
@@ -43,24 +46,33 @@ class ParseDateTimeRangeString {
 			list($stringStart, $stringEnd) = explode(" to ", strtolower($stringStart));
 		} else if (strpos(strtolower($stringStart), " for ") !== false) {
 			list($stringStart, $stringEnd) = explode(" for ", strtolower($stringStart));
+        } else if (strpos($stringStart, " - ") !== false) {
+			list($stringStart, $stringEnd) = explode(" - ", strtolower($stringStart));
 		} else if (strpos(strtolower($stringStart), "between ") !== false && strpos(strtolower($stringStart), " and ") !== false) {
 			$bits = explode("between", strtolower($stringStart));
 			list($stringStart, $stringEnd) = explode(" and ", strtolower($bits[1]));
 			$stringStart = $bits[0]." ".$stringStart;
 		}
-		
-		$this->parseString($stringStart, $start);
-		$end = clone $start;
-		if (trim($stringEnd)) {
-			$this->parseString($stringEnd, $end);
-			$this->parseStringForInterval($stringEnd, $end);
-		} else {
-			if (!$this->parseStringForInterval($stringStart, $end)) {
-				$end->add(new \DateInterval("PT2H"));
-			}
-		}
 
-		return new ParseDateTimeRangeStringResult($start, $end);
+        $this->parseString($stringStart, $start);
+        $end = clone $start;
+        if (trim($stringEnd)) {
+            if ($this->parseString($stringEnd, $end)) {
+                $endWasSpecified = true;
+            }
+            if ($this->parseStringForInterval($stringEnd, $end)) {
+                $endWasSpecified = true;
+            }
+        } else {
+            if (!$this->parseStringForInterval($stringStart, $end)) {
+                $end->add(new \DateInterval("PT".$this->defaultRangeLengthSeconds."S"));
+                $endWasSpecified = false;
+            } else {
+                $endWasSpecified = true;
+            }
+        }
+
+        return new ParseDateTimeRangeStringResult($start, $end, $endWasSpecified);
 	}
 	
 	protected $monthNames = array(
@@ -145,26 +157,34 @@ class ParseDateTimeRangeString {
 		30=>array('thirty'),
 		45=>array('fortyfive'),
 	);
-	
-	protected function parseString($string, \DateTime $dateTime) {
-		$this->parseStringForDate($string, $dateTime);
-		$this->parseStringForTime($string, $dateTime);
-	}
-	
-	protected function parseStringForDate($string, \DateTime $dateTime) {
-		
-		// some short hands
+
+    protected function parseString($string, \DateTime $dateTime) {
+        $r = false;
+        if ($this->parseStringForDate($string, $dateTime)) {
+            $r = true;
+        }
+        if ($this->parseStringForTime($string, $dateTime)) {
+            $r = true;
+        }
+        return $r;
+    }
+
+    protected function parseStringForDate($string, \DateTime $dateTime) {
+
+        $foundAnything = false;
+
+        // some short hands
 		
 		foreach(array('today','toady') as $token) {
 			if (strpos(strtolower($string), $token) !== false) {
-				return;
+				return true;
 			}
 		}
 		
 		foreach(array('tomorrow','tomorow','tommorrow') as $token) {
 			if (strpos(strtolower($string), $token) !== false) {
 				$dateTime->add(new \DateInterval("P1D"));
-				return;
+				return true;
 			}
 		}
 
@@ -202,6 +222,7 @@ class ParseDateTimeRangeString {
 					$string = str_ireplace($i, " ", $string);
 					$dateTime->setDate($i,  $dateTime->format('n'), $dateTime->format('j'));
 					// We are only setting year here, so can't return, may miss day and month.
+                    $foundAnything = true;
 				}
 		}
 		
@@ -213,19 +234,19 @@ class ParseDateTimeRangeString {
 				if (preg_match("/ (\d{1,2}) ".strtolower($monthName)."/", strtolower(" ".$string), $matches)) {
 					$dateTime->setDate($dateTime->format('Y'), $i, $matches[1]);
 					$this->ifDateInPastAddAYear($dateTime);
-					return;
+					return true;
 				}
 				// month as word with a 1 or 2 digit number at end, assume it's the date!
 				if (preg_match("/".strtolower($monthName)." (\d{1,2}) /", strtolower(" ".$string), $matches)) {
 					$dateTime->setDate($dateTime->format('Y'), $i, $matches[1]);
 					$this->ifDateInPastAddAYear($dateTime);
-					return;
+					return true;
 				}
 				// month as word with a 1 or 2 digit number in front and "of", assume it's the date!
 				if (preg_match("/ (\d{1,2}) of ".strtolower($monthName)."/", strtolower(" ".$string), $matches)) {
 					$dateTime->setDate($dateTime->format('Y'), $i, $matches[1]);
 					$this->ifDateInPastAddAYear($dateTime);
-					return;
+					return true;
 				}
 				// month by itself.
 				if (strpos(strtolower($string), strtolower($monthName)) !== false) {
@@ -237,6 +258,7 @@ class ParseDateTimeRangeString {
 						$dateTime->setDate($dateTime->format('Y'), $i, 1);
 					}
 					// We are only setting month here, so can't return, may miss day.
+                    $foundAnything = true;
 				}
 			}
 		}
@@ -265,7 +287,7 @@ class ParseDateTimeRangeString {
 								if ($dateTime->format('N') == $iDayOfWeek) {
 									$count++;
 									if ($count == $iWeekOfMonth) {
-										return;
+										return true;
 									}
 								} 
 								$dateTime->add(new \DateInterval("P1D"));
@@ -293,7 +315,7 @@ class ParseDateTimeRangeString {
 						$dateTime->sub(new \DateInterval("P1D"));
 					}
 					// Done, yay!
-					return;
+					return true;
 				}
 			}
 		}
@@ -303,7 +325,7 @@ class ParseDateTimeRangeString {
 			foreach($this->dayOfMonthNames[$i] as $dayOfMonthName) {
 				if (strpos(strtolower($string), strtolower($dayOfMonthName)) !== false) {
 					$dateTime->setDate($dateTime->format('Y'), $dateTime->format('n'), $i);
-					return;
+					return true;
 				}
 			}			
 		}
@@ -318,17 +340,18 @@ class ParseDateTimeRangeString {
 					while($dateTime->format("N") != $i) {
 						$dateTime->add(new \DateInterval("P1D"));
 					}
-					return;
+					return true;
 				}
 				if (strpos(strtolower($string), strtolower($dayOfWeekName)) !== false) {
 					while($dateTime->format("N") != $i) {
 						$dateTime->add(new \DateInterval("P1D"));
 					}
-					return;
+					return true;
 				}
 			}
 		}
 
+        return $foundAnything;
 
 	}
 
@@ -350,6 +373,7 @@ class ParseDateTimeRangeString {
 		} else {
 			$dateTime->setDate($year, $probableMonth, $probableDay);
 		}
+        return true;
 		
 	}
 	
@@ -451,6 +475,8 @@ class ParseDateTimeRangeString {
 				return true;
 			}
 		}
+
+        return false;
 		
 	}
 	
@@ -503,6 +529,22 @@ class ParseDateTimeRangeString {
 	public function getTimezone() {
 		return $this->timezone;
 	}
+
+    /**
+     * @param int $defaultRangeLengthSeconds
+     */
+    public function setDefaultRangeLengthSeconds($defaultRangeLengthSeconds)
+    {
+        $this->defaultRangeLengthSeconds = $defaultRangeLengthSeconds;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDefaultRangeLengthSeconds()
+    {
+        return $this->defaultRangeLengthSeconds;
+    }
 
 }
 

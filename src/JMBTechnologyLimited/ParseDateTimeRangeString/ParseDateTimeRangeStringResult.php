@@ -14,10 +14,13 @@ class ParseDateTimeRangeStringResult {
 	protected $start;
 	/** @var \DateTime **/
 	protected $end;
+
+    protected $endWasSpecified;
 	
-	function __construct(\DateTime $start, \DateTime $end) {
+	function __construct(\DateTime $start, \DateTime $end, $endWasSpecified = true) {
 		$this->start = $start;
 		$this->end = $end;
+        $this->endWasSpecified = $endWasSpecified;
 	}
 
 	public function getStart() {
@@ -27,6 +30,14 @@ class ParseDateTimeRangeStringResult {
 	public function getEnd() {
 		return $this->end;
 	}
+
+    /**
+     * @return boolean
+     */
+    public function getEndWasSpecified()
+    {
+        return $this->endWasSpecified;
+    }
 
 }
 	
